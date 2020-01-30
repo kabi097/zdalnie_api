@@ -48,6 +48,7 @@ class Tag
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -62,7 +63,7 @@ class Tag
 
     public function setName(string $name): self
     {
-        $this->name = $name;
+        $this->name = strtoupper($name);
 
         return $this;
     }
@@ -94,13 +95,6 @@ class Tag
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     /**

@@ -2,14 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
+ * @ApiResource(
+ *     normalizationContext={"groups"={"post:read"}},
+ *     denormalizationContext={"groups"={"post:write"}}
+ * )
+ * @ApiFilter()
  */
 class Post
 {
@@ -22,31 +29,36 @@ class Post
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Groups({"post:read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"post:read", "post:write"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({"post:read", "post:write"})
      */
     private $budget;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isPublished;
+    private $isPublished = true;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"post:read"})
      */
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", columnDefinition="DATETIME on update CURRENT_TIMESTAMP")
+     * @Groups({"post:read"})
      */
     private $updatedAt;
 
@@ -71,10 +83,20 @@ class Post
      */
     private $tags;
 
-    public function __construct()
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     */
+    private $user;
+
+    public function __construct(string $title = null, string $description = null, float $price = null)
     {
         $this->replies = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+        $this->tags = new ArayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->title = $title;
+        $this->description = $description;
+        $this->price = $price;
     }
 
     public function getId(): ?int
@@ -135,24 +157,20 @@ class Post
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    /**
+     * @Groups({"post:read"})
+     */
+    public function getCreatedAtAgo(): string
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
+        return Carbon::instance($this.$this->getCreatedAt())->diffForHumans();
     }
+
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
 
     public function getEndDate(): ?\DateTimeInterface
     {
@@ -231,6 +249,18 @@ class Post
         if ($this->tags->contains($tag)) {
             $this->tags->removeElement($tag);
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

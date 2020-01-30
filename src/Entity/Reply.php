@@ -44,15 +44,26 @@ class Reply
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", columnDefinition="DATETIME on update CURRENT_TIMESTAMP")
      */
-    private $updatedAtupdatedAt;
+    private $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Post", inversedBy="replies")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $post;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="replies")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     */
+    private $user;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -112,23 +123,9 @@ class Reply
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAtupdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAtupdatedAt;
-    }
-
-    public function setUpdatedAtupdatedAt(\DateTimeInterface $updatedAtupdatedAt): self
-    {
-        $this->updatedAtupdatedAt = $updatedAtupdatedAt;
-
-        return $this;
+        return $this->updatedAt;
     }
 
     public function getPost(): ?Post
@@ -139,6 +136,18 @@ class Reply
     public function setPost(?Post $post): self
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

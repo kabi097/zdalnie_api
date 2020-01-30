@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ApiResource(
+ *  collectionOperations={"get", "post"},
+ * )
  */
 class User implements UserInterface
 {
@@ -23,7 +29,7 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string", length=255)
      */
     private $roles = [];
 
@@ -67,6 +73,22 @@ class User implements UserInterface
      * @ORM\Column(type="datetime")
      */
     private $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="user")
+     */
+    private $posts;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Reply", mappedBy="user")
+     */
+    private $replies;
+
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
+        $this->replies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -206,13 +228,6 @@ class User implements UserInterface
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
@@ -221,6 +236,68 @@ class User implements UserInterface
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Post[]
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post): self
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts[] = $post;
+            $post->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post): self
+    {
+        if ($this->posts->contains($post)) {
+            $this->posts->removeElement($post);
+            // set the owning side to null (unless already changed)
+            if ($post->getUser() === $this) {
+                $post->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reply[]
+     */
+    public function getReplies(): Collection
+    {
+        return $this->replies;
+    }
+
+    public function addReply(Reply $reply): self
+    {
+        if (!$this->replies->contains($reply)) {
+            $this->replies[] = $reply;
+            $reply->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReply(Reply $reply): self
+    {
+        if ($this->replies->contains($reply)) {
+            $this->replies->removeElement($reply);
+            // set the owning side to null (unless already changed)
+            if ($reply->getUser() === $this) {
+                $reply->setUser(null);
+            }
+        }
 
         return $this;
     }
