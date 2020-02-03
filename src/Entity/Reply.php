@@ -4,9 +4,26 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     accessControl="is_granted('ROLE_USER')",
+ *     collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "access_control"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *              "validation_groups"={"Default", "create"}
+ *          },
+ *     },
+ *     itemOperations={
+ *          "get",
+ *          "put"={"access_control"="is_granted('ROLE_USER') and object == user"},
+ *          "delete"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *     },
+ *     normalizationContext={"groups"={"reply:read"}},
+ *     denormalizationContext={"groups"={"reply:write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\ReplyRepository")
  */
 class Reply
@@ -15,36 +32,43 @@ class Reply
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"reply:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"reply:read", "reply:write", "post:item:get"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"reply:read", "reply:write", "post:item:get"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=20)
+     * @Groups({"reply:read", "reply:write", "post:item:get"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"reply:read", "reply:write", "post:item:get"})
      */
     private $isPublished;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"reply:read", "post:item:get"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", columnDefinition="DATETIME on update CURRENT_TIMESTAMP")
+     * @Groups({"reply:read", "post:item:get"})
      */
     private $updatedAt;
 

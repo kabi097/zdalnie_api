@@ -9,14 +9,29 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
+ *                                                                                                                                                                                                                                                                                                                                                                                                           @ORM\EntityListeners({"App\Doctrine\SetOwnerListener"})
  * @ApiResource(
+ *     collectionOperations={
+ *          "get"={},
+ *          "post"={"access_control" = "is_granted('EDIT', previous_object)"}
+ *      },
+ *     itemOperations={"get"={"normalizationContext"={"groups"={"post:item:get"}}},
+ *          "put"={"access_control"="is_granted('EDIT', previous_object)",},
+ *          "delete"={"access_control"="is_granted('EDIT', previous_object)",}
+ *     },
  *     normalizationContext={"groups"={"post:read"}},
  *     denormalizationContext={"groups"={"post:write"}}
  * )
- * @ApiFilter()
+ * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
+ * @ApiFilter(SearchFilter::class, properties={"title": "partial", "description": "partial"})
+ * @ApiFilter(RangeFilter::class, properties={"budget"})
  */
 class Post
 {
@@ -29,19 +44,23 @@ class Post
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"post:read"})
+     * @Groups({"post:read", "post:write", "reply:read"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min=5, max=100, max="Tytuł może mieć maksymalnie 100 znaków", minMessage="Tytuł musi mieć więcej niż 5 znaków")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"post:read", "post:write"})
+     * @Groups({"post:read", "post:write", "reply:read"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min=5, minMessage="Musisz użyć co najmniej 5 znaków w Opisie")
      */
     private $description;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"post:read", "post:write"})
+     * @Groups({"post:read", "post:write", "reply:read"})
      */
     private $budget;
 
@@ -69,6 +88,7 @@ class Post
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Reply", mappedBy="post")
+     * @Groups({"post:read"})
      */
     private $replies;
 
@@ -89,14 +109,14 @@ class Post
      */
     private $user;
 
-    public function __construct(string $title = null, string $description = null, float $price = null)
+    public function __construct(string $title = null, string $description = null, float $budget = null, int $days = null)
     {
         $this->replies = new ArrayCollection();
         $this->tags = new ArayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->title = $title;
         $this->description = $description;
-        $this->price = $price;
+        $this->budget = $budget;
     }
 
     public function getId(): ?int
@@ -119,6 +139,16 @@ class Post
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+
+    /**
+     * @Groups("post:read")
+     * @return string|null
+     */
+    public function getShortDescription(): ?string
+    {
+        return (strlen($this->description) < 60) ? $this->description : substr($this->description, 0, 60)."...";
     }
 
     public function setDescription(string $description): self

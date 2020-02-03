@@ -6,9 +6,15 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={"DELETE"={"access_control" = "is_granted('ROLE_ADMIN')"}, "PUT"={"access_control" = "is_granted('ROLE_ADMIN')"}},
+ *     collectionOperations={"POST"={"access_control" = "is_granted('ROLE_ADMIN')"}, "GET"},
+ *     normalizationContext={"groups"={"tag:read"}},
+ *     denormalizationContext={"groups"={"tag:write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\TagRepository")
  */
 class Tag
@@ -22,21 +28,25 @@ class Tag
 
     /**
      * @ORM\Column(type="string", length=20)
+     * @Groups({"tag:read", "tag:write"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"tag:read", "tag:write"})
      */
     private $icon;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"tag:read", "tag:write"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"tag:read", "tag:write"})
      */
     private $createdAt;
 

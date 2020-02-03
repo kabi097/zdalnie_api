@@ -6,9 +6,15 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={"DELETE"={"access_control" = "is_granted('ROLE_ADMIN')"}, "PUT"={"access_control" = "is_granted('ROLE_ADMIN')"}},
+ *     collectionOperations={"POST"={"access_control" = "is_granted('ROLE_ADMIN')"}, "GET"},
+ *     normalizationContext={"groups"={"category:read"}},
+ *     denormalizationContext={"groups"={"category:write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
  */
 class Category
@@ -22,11 +28,13 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"category:read", "category:write"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"category:read", "category:write"})
      */
     private $icon;
 
