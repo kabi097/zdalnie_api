@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Validator\IsValidOwner;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -81,6 +83,8 @@ class Reply
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="replies")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @IsValidOwner()
+     * @Assert\NotBlank()
      */
     private $user;
 

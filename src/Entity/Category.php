@@ -10,8 +10,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     itemOperations={"DELETE"={"access_control" = "is_granted('ROLE_ADMIN')"}, "PUT"={"access_control" = "is_granted('ROLE_ADMIN')"}},
- *     collectionOperations={"POST"={"access_control" = "is_granted('ROLE_ADMIN')"}, "GET"},
+ *     itemOperations={"GET", "DELETE"={"access_control" = "is_granted('ROLE_USER')"}, "PUT"={"access_control" = "is_granted('ROLE_USER')"}},
+ *     collectionOperations={"GET", "POST"={"access_control" = "is_granted('ROLE_USER')"}},
  *     normalizationContext={"groups"={"category:read"}},
  *     denormalizationContext={"groups"={"category:write"}}
  * )

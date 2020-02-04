@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Validator\IsValidOwner;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     collectionOperations={
  *          "get"={},
- *          "post"={"access_control" = "is_granted('EDIT', previous_object)"}
+ *          "post"={"access_control" = "is_granted('ROLE_USER', previous_object)"}
  *      },
  *     itemOperations={"get"={"normalizationContext"={"groups"={"post:item:get"}}},
  *          "put"={"access_control"="is_granted('EDIT', previous_object)",},
@@ -46,7 +47,7 @@ class Post
      * @ORM\Column(type="string", length=100)
      * @Groups({"post:read", "post:write", "reply:read"})
      * @Assert\NotBlank()
-     * @Assert\Length(min=5, max=100, max="Tytuł może mieć maksymalnie 100 znaków", minMessage="Tytuł musi mieć więcej niż 5 znaków")
+     * @Assert\Length(min=5, max=100, maxMessage="Tytuł może mieć maksymalnie 100 znaków", minMessage="Tytuł musi mieć więcej niż 5 znaków")
      */
     private $title;
 
@@ -93,6 +94,7 @@ class Post
     private $replies;
 
     /**
+     * @Groups({"post:read", "post:write"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -104,15 +106,19 @@ class Post
     private $tags;
 
     /**
+     * @Groups({"post:read", "post:write"})
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @Groups({"post:read", "post:collection:post"})
+     * @IsValidOwner()
+     * @Assert\NotBlank()
      */
     private $user;
 
     public function __construct(string $title = null, string $description = null, float $budget = null, int $days = null)
     {
         $this->replies = new ArrayCollection();
-        $this->tags = new ArayCollection();
+        $this->tags = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->title = $title;
         $this->description = $description;
