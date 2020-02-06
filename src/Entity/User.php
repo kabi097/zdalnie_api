@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -63,37 +64,37 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=60)
-     * @Groups({"user:read", "user:write"})
+     * @Groups({"user:read", "user:write", "post:read"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","user:write"})
+     * @Groups({"user:read","user:write", "post:read", "reply:read"})
      */
     private $publicEmail;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","user:write"})
+     * @Groups({"user:read","user:write", "post:read", "reply:read"})
      */
     private $publicPhone;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","user:write"})
+     * @Groups({"user:read","user:write", "post:read", "reply:read"})
      */
     private $publicAddress;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"user:read","user:write"})
+     * @Groups({"user:read","user:write", "post:read", "reply:read"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"user:read"})
+     * @Groups({"user:read", "post:read", "reply:read"})
      */
     private $createdAt;
 
@@ -163,6 +164,9 @@ class User implements UserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
+        if ($this->getEmail() == 'paw.inter@onet.eu') {
+            $roles[] = 'ROLE_ADMIN';
+        }
 
         return array_unique($roles);
     }
@@ -353,5 +357,14 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+
+    /**
+     * @Groups({"user:read"})
+     */
+    public function getCreatedAtAgo(): string
+    {
+        return Carbon::instance($this->getCreatedAt())->locale('pl')->diffForHumans();
     }
 }

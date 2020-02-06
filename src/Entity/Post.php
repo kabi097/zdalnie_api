@@ -84,6 +84,7 @@ class Post
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"post:read"})
      */
     private $endDate;
 
@@ -123,6 +124,7 @@ class Post
         $this->title = $title;
         $this->description = $description;
         $this->budget = $budget;
+        $this->endDate = $this->createdAt->add(new \DateInterval("P".$days."D"));
     }
 
     public function getId(): ?int
@@ -198,9 +200,8 @@ class Post
      */
     public function getCreatedAtAgo(): string
     {
-        return Carbon::instance($this.$this->getCreatedAt())->diffForHumans();
+        return Carbon::instance($this->getCreatedAt())->locale('pl')->diffForHumans();
     }
-
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
@@ -299,5 +300,21 @@ class Post
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @Groups({"post:read", "post:write"})
+     */
+    public function setDays(int $days): void
+    {
+        $this->endDate = $this->createdAt->add(new \DateInterval("P".$days."D"));
+    }
+
+    /**
+     * @Groups({"post:read", "post:write"})
+     */
+    public function getLeftDays(): string
+    {
+        return Carbon::instance($this->getEndDate())->locale('pl')->diffForHumans();
     }
 }

@@ -22,8 +22,7 @@ class PostVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, ['EDIT'])
-            && $subject instanceof \App\Entity\BlogPost;
+        return in_array($attribute, ['EDIT']);
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)

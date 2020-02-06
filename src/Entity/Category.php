@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -28,13 +29,13 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"category:read", "category:write"})
+     * @Groups({"category:read", "category:write", "post:read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"category:read", "category:write"})
+     * @Groups({"category:read", "category:write", "post:read"})
      */
     private $icon;
 
@@ -45,6 +46,7 @@ class Category
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="category")
+     * @ApiSubresource()
      */
     private $posts;
 

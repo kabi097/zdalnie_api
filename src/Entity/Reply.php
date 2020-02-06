@@ -4,24 +4,20 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Validator\IsValidOwner;
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
- *     accessControl="is_granted('ROLE_USER')",
  *     collectionOperations={
- *          "get",
- *          "post"={
- *              "access_control"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
- *              "validation_groups"={"Default", "create"}
- *          },
- *     },
- *     itemOperations={
- *          "get",
- *          "put"={"access_control"="is_granted('ROLE_USER') and object == user"},
- *          "delete"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *          "get"={},
+ *          "post"={"access_control" = "is_granted('ROLE_USER', previous_object)"}
+ *      },
+ *     itemOperations={"get"={"normalizationContext"={"groups"={"reply:item:get"}}},
+ *          "put"={"access_control"="is_granted('EDIT', previous_object)",},
+ *          "delete"={"access_control"="is_granted('EDIT', previous_object)",}
  *     },
  *     normalizationContext={"groups"={"reply:read"}},
  *     denormalizationContext={"groups"={"reply:write"}}
@@ -40,19 +36,19 @@ class Reply
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"reply:read", "reply:write", "post:item:get"})
+     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"reply:read", "reply:write", "post:item:get"})
+     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=20)
-     * @Groups({"reply:read", "reply:write", "post:item:get"})
+     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read"})
      */
     private $type;
 
@@ -64,7 +60,7 @@ class Reply
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"reply:read", "post:item:get"})
+     * @Groups({"reply:read", "post:item:get", "post:read"})
      */
     private $createdAt;
 
@@ -77,6 +73,7 @@ class Reply
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Post", inversedBy="replies")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @Groups({"reply:read", "reply:write"})
      */
     private $post;
 
@@ -85,6 +82,7 @@ class Reply
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @IsValidOwner()
      * @Assert\NotBlank()
+     * @Groups({"reply:read", "reply:write", "post:read"})
      */
     private $user;
 
@@ -178,5 +176,13 @@ class Reply
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @Groups({"reply:read", "post:read"})
+     */
+    public function getCreatedAtAgo(): string
+    {
+        return Carbon::instance($this->getCreatedAt())->locale('pl')->diffForHumans();
     }
 }
