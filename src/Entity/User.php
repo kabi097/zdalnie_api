@@ -361,7 +361,7 @@ class User implements UserInterface
 
 
     /**
-     * @Groups({"user:read"})
+     * @Groups({"user:read", "post:read"})
      */
     public function getCreatedAtAgo(): string
     {

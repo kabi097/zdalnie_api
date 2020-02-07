@@ -9,3 +9,9 @@ api_platform:
             apiKey:
                 name: Authorization
                 type: header
+    collection:
+        pagination:
+            client_items_per_page: true # Disabled by default
+            client_enabled: false
+            items_per_page: 10 # Default value
+            items_per_page_parameter_name: itemsPerPage # Default value
