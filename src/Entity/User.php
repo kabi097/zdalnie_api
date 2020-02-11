@@ -157,6 +157,14 @@ class User implements UserInterface
     }
 
     /**
+     * @Groups({"user:read", "post:read"})
+     */
+    public function getLogin(): string
+    {
+        return (string) $this->username;
+    }
+
+    /**
      * @see UserInterface
      */
     public function getRoles(): array
@@ -164,7 +172,7 @@ class User implements UserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-        if ($this->getEmail() == 'paw.inter@onet.eu') {
+        if ($this->getEmail() == 'admin@admin.pl') {
             $roles[] = 'ROLE_ADMIN';
         }
 
@@ -299,6 +307,7 @@ class User implements UserInterface
 
     /**
      * @return Collection|Post[]
+     * @Groups({"user:read"})
      */
     public function getPosts(): Collection
     {
@@ -330,6 +339,7 @@ class User implements UserInterface
 
     /**
      * @return Collection|Reply[]
+     * @Groups({"user:read"})
      */
     public function getReplies(): Collection
     {

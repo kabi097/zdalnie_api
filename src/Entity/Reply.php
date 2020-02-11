@@ -36,37 +36,37 @@ class Reply
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read"})
+     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read", "user:item:get", "user:read"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read"})
+     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read", "user:item:get", "user:read"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=20)
-     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read"})
+     * @Groups({"reply:read", "reply:write", "post:item:get", "post:read", "user:read"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"reply:read", "reply:write", "post:item:get"})
+     * @Groups({"reply:read", "reply:write", "post:item:get", "user:read"})
      */
     private $isPublished;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"reply:read", "post:item:get", "post:read"})
+     * @Groups({"reply:read", "post:item:get", "post:read", "user:read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", columnDefinition="DATETIME on update CURRENT_TIMESTAMP")
-     * @Groups({"reply:read", "post:item:get"})
+     * @Groups({"reply:read", "post:item:get", "user:read"})
      */
     private $updatedAt;
 
@@ -82,7 +82,7 @@ class Reply
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @IsValidOwner()
      * @Assert\NotBlank()
-     * @Groups({"reply:read", "reply:write", "post:read"})
+     * @Groups({"reply:read", "reply:write", "post:read", "user:item:get"})
      */
     private $user;
 

@@ -47,7 +47,7 @@ class Post
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"post:read", "post:write", "reply:read"})
+     * @Groups({"post:read", "post:write", "reply:read", "user:read"})
      * @Assert\NotBlank()
      * @Assert\Length(min=5, max=100, maxMessage="Tytuł może mieć maksymalnie 100 znaków", minMessage="Tytuł musi mieć więcej niż 5 znaków")
      */
@@ -55,7 +55,7 @@ class Post
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"post:read", "post:write", "reply:read"})
+     * @Groups({"post:read", "post:write", "reply:read", "user:read"})
      * @Assert\NotBlank()
      * @Assert\Length(min=5, minMessage="Musisz użyć co najmniej 5 znaków w Opisie")
      */
@@ -63,7 +63,7 @@ class Post
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"post:read", "post:write", "reply:read"})
+     * @Groups({"post:read", "post:write", "reply:read", "user:read"})
      */
     private $budget;
 
@@ -74,30 +74,30 @@ class Post
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"post:read"})
+     * @Groups({"post:read", "user:read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", columnDefinition="DATETIME on update CURRENT_TIMESTAMP")
-     * @Groups({"post:read"})
+     * @Groups({"post:read", "user:read"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"post:read"})
+     * @Groups({"post:read", "user:read"})
      */
     private $endDate;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Reply", mappedBy="post")
-     * @Groups({"post:read"})
+     * @Groups({"post:read", "user:read"})
      */
     private $replies;
 
     /**
-     * @Groups({"post:read", "post:write"})
+     * @Groups({"post:read", "post:write", "user:read"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -198,7 +198,7 @@ class Post
     }
 
     /**
-     * @Groups({"post:read"})
+     * @Groups({"post:read", "user:read"})
      */
     public function getCreatedAtAgo(): string
     {
@@ -313,7 +313,7 @@ class Post
     }
 
     /**
-     * @Groups({"post:read", "post:write"})
+     * @Groups({"post:read", "post:write", "user:read"})
      */
     public function getLeftDays(): string
     {

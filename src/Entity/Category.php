@@ -29,7 +29,7 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"category:read", "category:write", "post:read"})
+     * @Groups({"category:read", "category:write", "post:read", "user:read"})
      */
     private $name;
 
