@@ -22,11 +22,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     collectionOperations={
  *          "get"={},
- *          "post"={"access_control" = "is_granted('ROLE_USER', previous_object)"}
+ *          "post"={"security" = "is_granted('ROLE_USER')"}
  *      },
  *     itemOperations={"get"={"normalizationContext"={"groups"={"post:item:get"}}},
- *          "put"={"access_control"="is_granted('EDIT', previous_object)",},
- *          "delete"={"access_control"="is_granted('EDIT', previous_object)",}
+ *          "put"={"security"="is_granted('EDIT')",},
+ *          "delete"={"security"="is_granted('EDIT')",}
  *     },
  *     normalizationContext={"groups"={"post:read"}},
  *     denormalizationContext={"groups"={"post:write"}}
@@ -126,7 +126,9 @@ class Post
         $this->title = $title;
         $this->description = $description;
         $this->budget = $budget;
-        $this->endDate = $this->createdAt->add(new \DateInterval("P".$days."D"));
+        if ($days) {
+            $this->endDate = $this->createdAt->add(new \DateInterval("P".$days."D"));
+        }
     }
 
     public function getId(): ?int
