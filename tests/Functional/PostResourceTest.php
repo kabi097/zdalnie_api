@@ -2,39 +2,42 @@
 
 namespace App\Tests\Functional;
 
-use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
-use App\Entity\User;
+use App\Entity\Category;
+use App\Entity\Post;
+use App\Test\CustomApiTestCase;
+use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
 
-class PostResourceTest extends ApiTestCase {
+class PostResourceTest extends CustomApiTestCase {
 
     use ReloadDatabaseTrait;
 
-    public function testCreatePostListing() {
+    public function testCreatePost() {
+        self::bootKernel();
+
         $client = self::createClient();
-        $client->request('POST', '/api/posts', [
-            'headers' => ['Content-Type' => 'application/json'],
-            'json' => [],
-        ]);
-        $this->assertResponseStatusCodeSame(401);
+        $this->createUserAndLogIn($client, 'jan@testowy.pl', 'qwerty123');
 
-        $user = new User();
-        $user->setEmail('test@testowy.pl');
-        $user->setUsername('tester');
-        $user->setPassword('$argon2i$v=19$m=65536,t=4,p=1$ZXIzS2xqT3g5T21KNHkwQg$j1MId4KzWxVJeN8MYUaG59GQD8JvlDBn423T6TGXMjQ');
-        $user->setType(true);
+    }
 
-        $em = self::$container->get('doctrine')->getManager();
-        $em->persist($user);
+    public function testUpdatePost() {
+        self::bootKernel();
+        $user = $this->createUser('jan@testowy.pl', 'qwerty123');
+
+        $category = new Category();
+        $category->setName('Ogólne');
+
+        $post = new Post('Zlecę stworzenie strony internetowej', 'Lorem ipsum dolor sit amet...', 2000, 7);
+        $post->setUser($user);
+        $post->setCategory($category);
+
+        $em = $this->getEntityManager();
+        $em->persist($category);
+        $em->persist($post);
         $em->flush();
 
-        $client->request('POST', '/login', [
-            'headers' => ['Content-Type' => 'application/json'],
-            'json' => [
-                'email' => 'test@testowy.pl',
-                'password' => 'qwerty123',
-            ],
-        ]);
-
+        $client = self::createClient();
+        $client = $this->createAuthenticatedClient($client, 'jan@testowy.pl', 'qwerty123');
+        $client->request('PUT', '/api/posts', 'foo');
         $this->assertResponseStatusCodeSame(200);
     }
 }
