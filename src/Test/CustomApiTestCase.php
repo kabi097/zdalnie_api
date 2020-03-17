@@ -11,8 +11,8 @@ class CustomApiTestCase extends ApiTestCase
     protected function createUser(string $email, string $password) : User {
        $user = new User();
        $user->setEmail($email);
-//       $user->setPassword(self::$container->get('security.password_encoder')->encodePassword($user, $password));
-       $user->setPassword($password);
+       $user->setPassword(self::$container->get('security.password_encoder')->encodePassword($user, $password));
+//       $user->setPassword('$argon2i$v=19$m=65536,t=4,p=1$R1BGZHNLcXBMMjJ4LkhjOA$GJUq4BxJeYCmDiZ3kVJuu11A0I2xQBwFJjX497yEqjc');
        $user->setUsername(substr($email, 0, strpos($email, '@')));
        $user->setType(true);
 
@@ -37,7 +37,7 @@ class CustomApiTestCase extends ApiTestCase
         $this->assertResponseStatusCodeSame(200);
     }
 
-    protected function createAuthenticatedClient(Client $client, string $email, string $password) {
+    protected function getJWTToken(Client $client, string $email, string $password) {
         $response = $client->request('POST', '/login', [
             'json' => [
                 'email' => $email,
@@ -45,13 +45,9 @@ class CustomApiTestCase extends ApiTestCase
             ],
         ]);
 
-        dump($response);
-
         $data = json_decode($client->getResponse()->getContent(), true);
 
-        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $data['token']));
-
-        return $client;
+        return $data['token'];
     }
 
 

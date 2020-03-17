@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,14 +21,14 @@ use Symfony\Component\Validator\Constraints\Date;
  *     collectionOperations={
  *          "get",
  *          "post"={
- *              "access_control"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *              "security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY', object)",
  *              "validation_groups"={"Default", "create"}
  *          },
  *     },
  *     itemOperations={
  *          "get",
- *          "put"={"access_control"="is_granted('ROLE_USER') and object == user"},
- *          "delete"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *          "put"={"security"="is_granted('ROLE_USER') and object == user"},
+ *          "delete"={"security"="is_granted('ROLE_ADMIN')"}
  *     },
  *     normalizationContext={"groups"={"user:read"}},
  *     denormalizationContext={"groups"={"user:write"}}
@@ -53,6 +54,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"user:write"})
      */
     private $roles = [];
 
@@ -65,6 +67,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=60)
      * @Groups({"user:read", "user:write", "post:read"})
+     * @Assert\NotBlank()
      */
     private $username;
 
@@ -106,18 +109,22 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="user")
+     * @Groups({"user:read"})
+     * @ApiSubresource()
      */
     private $posts;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Reply", mappedBy="user")
+     * @Groups({"user:read"})
+     * @ApiSubresource()
      */
     private $replies;
 
     /**
      * @SerializedName("password")
      * @Groups({"user:write"})
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"create"})
      */
     private $plainPassword;
 
@@ -191,7 +198,7 @@ class User implements UserInterface
      */
     public function getPlainPassword() : string
     {
-        return $this->plainPassword;
+        return $this->plainPassword ?? "";
     }
 
     public function setPlainPassword($plainPassword): self
@@ -307,7 +314,6 @@ class User implements UserInterface
 
     /**
      * @return Collection|Post[]
-     * @Groups({"user:read"})
      */
     public function getPosts(): Collection
     {
