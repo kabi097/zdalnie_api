@@ -79,13 +79,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","user:write", "post:read", "reply:read"})
+     * @Groups({"user:read","user:write", "post:read"})
      */
     private $publicPhone;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","user:write", "post:read", "reply:read"})
+     * @Groups({"user:read","user:write", "post:read"})
      */
     private $publicAddress;
 
@@ -97,7 +97,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"user:read", "post:read", "reply:read"})
+     * @Groups({"user:read", "post:read"})
      */
     private $createdAt;
 
@@ -164,7 +164,7 @@ class User implements UserInterface
     }
 
     /**
-     * @Groups({"user:read", "post:read"})
+     * @Groups({"user:read", "post:read", "reply:read"})
      */
     public function getLogin(): string
     {

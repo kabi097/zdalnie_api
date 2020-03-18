@@ -55,7 +55,7 @@ class Post
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"post:read", "post:write", "reply:read", "user:read"})
+     * @Groups({"post:read", "post:write", "user:read"})
      * @Assert\NotBlank()
      * @Assert\Length(min=5, minMessage="Musisz użyć co najmniej 5 znaków w Opisie")
      */
@@ -63,7 +63,7 @@ class Post
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"post:read", "post:write", "reply:read", "user:read"})
+     * @Groups({"post:read", "post:write", "user:read"})
      */
     private $budget;
 
