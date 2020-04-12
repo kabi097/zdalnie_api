@@ -128,6 +128,42 @@ class User implements UserInterface
      */
     private $plainPassword;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"user:read","user:write"})
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read","user:write"})
+     */
+    private $website;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read","user:write"})
+     */
+    private $facebook;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read","user:write"})
+     */
+    private $github;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read","user:write"})
+     */
+    private $linkedin;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read","user:write"})
+     */
+    private $youtube;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -382,5 +418,77 @@ class User implements UserInterface
     public function getCreatedAtAgo(): string
     {
         return Carbon::instance($this->getCreatedAt())->locale('pl')->diffForHumans();
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): self
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getFacebook(): ?string
+    {
+        return $this->facebook;
+    }
+
+    public function setFacebook(?string $facebook): self
+    {
+        $this->facebook = $facebook;
+
+        return $this;
+    }
+
+    public function getGithub(): ?string
+    {
+        return $this->github;
+    }
+
+    public function setGithub(?string $github): self
+    {
+        $this->github = $github;
+
+        return $this;
+    }
+
+    public function getLinkedin(): ?string
+    {
+        return $this->linkedin;
+    }
+
+    public function setLinkedin(?string $linkedin): self
+    {
+        $this->linkedin = $linkedin;
+
+        return $this;
+    }
+
+    public function getYoutube(): ?string
+    {
+        return $this->youtube;
+    }
+
+    public function setYoutube(?string $youtube): self
+    {
+        $this->youtube = $youtube;
+
+        return $this;
     }
 }
