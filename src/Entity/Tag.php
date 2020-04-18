@@ -10,8 +10,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     itemOperations={"DELETE"={"access_control" = "is_granted('ROLE_ADMIN')"}, "PUT"={"access_control" = "is_granted('ROLE_ADMIN')"}},
- *     collectionOperations={"POST"={"access_control" = "is_granted('ROLE_ADMIN')"}, "GET"},
+ *     itemOperations={"GET", "DELETE"={"access_control" = "is_granted('ROLE_USER')"}, "PUT"={"access_control" = "is_granted('ROLE_USER')"}},
+ *     collectionOperations={"GET", "POST"={"access_control" = "is_granted('ROLE_USER')"}},
  *     normalizationContext={"groups"={"tag:read"}},
  *     denormalizationContext={"groups"={"tag:write"}}
  * )
@@ -36,12 +36,6 @@ class Tag
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"tag:read", "tag:write"})
      */
-    private $icon;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"tag:read", "tag:write"})
-     */
     private $color;
 
     /**
@@ -55,10 +49,16 @@ class Tag
      */
     private $posts;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="tags")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,18 +74,6 @@ class Tag
     public function setName(string $name): self
     {
         $this->name = strtoupper($name);
-
-        return $this;
-    }
-
-    public function getIcon(): ?string
-    {
-        return $this->icon;
-    }
-
-    public function setIcon(?string $icon): self
-    {
-        $this->icon = $icon;
 
         return $this;
     }
@@ -130,6 +118,34 @@ class Tag
         if ($this->posts->contains($post)) {
             $this->posts->removeElement($post);
             $post->removeTag($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            $user->removeTag($this);
         }
 
         return $this;

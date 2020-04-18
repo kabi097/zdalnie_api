@@ -123,7 +123,7 @@ class User implements UserInterface
 
     /**
      * @SerializedName("password")
-     * @Groups({"user:write"})
+     * @Groups({"user:write", "user:read"})
      * @Assert\NotBlank(groups={"create"})
      */
     private $plainPassword;
@@ -164,12 +164,18 @@ class User implements UserInterface
      */
     private $youtube;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", inversedBy="users")
+     */
+    private $tags;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->replies = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -411,7 +417,6 @@ class User implements UserInterface
         return $this;
     }
 
-
     /**
      * @Groups({"user:read", "post:read"})
      */
@@ -488,6 +493,32 @@ class User implements UserInterface
     public function setYoutube(?string $youtube): self
     {
         $this->youtube = $youtube;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tags->contains($tag)) {
+            $this->tags->removeElement($tag);
+        }
 
         return $this;
     }
