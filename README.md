@@ -2,11 +2,6 @@
 #### Witryna ogłoszeniowa z ofertami pracy zdalnej
 Projekt pracy inżynierskiej zrealizowany dla Politechniki Poznańskiej. Celem projektu było zaprojektowanie i implementacja platformy internetowej służącej do publikowania ogłoszeń pracy zdalnej. Aplikację wykonano przy użyciu biblioteki API Platform (Symfony) oraz Vue.js (JavaScript). 
 
-### Repozytoria
-Serwer REST API: [github.com/kabi097/zdalnie_api](https://github.com/kabi097/zdalnie_api)
-
-Aplikacja frontend: [github.com/kabi097/zdalnie_app](https://github.com/kabi097/zdalnie_app)
-
 ### Demo (video)
 <a href="https://vimeo.com/450289918" target="_blank"><img alt="Zobacz film" src="https://i.imgur.com/umqA1VB.png" width="700"></a>
 ![](https://i.imgur.com/ncDHI2Z.png)
@@ -19,6 +14,10 @@ Aplikacja frontend: [github.com/kabi097/zdalnie_app](https://github.com/kabi097/
 - Specjalne uprawnienia dla administratora
 - Skrypt dodający przykładowe dane do bazy danych
 
+### Repozytoria
+Serwer REST API: [github.com/kabi097/zdalnie_api](https://github.com/kabi097/zdalnie_api)
+
+Aplikacja frontend: [github.com/kabi097/zdalnie_app](https://github.com/kabi097/zdalnie_app)
 
 ### Instrukcja
 
