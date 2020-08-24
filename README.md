@@ -2,6 +2,11 @@
 #### Witryna ogłoszeniowa z ofertami pracy zdalnej
 Projekt pracy inżynierskiej zrealizowany dla Politechniki Poznańskiej. Celem projektu było zaprojektowanie i implementacja platformy internetowej służącej do publikowania ogłoszeń pracy zdalnej. Aplikację wykonano przy użyciu biblioteki API Platform (Symfony) oraz Vue.js (JavaScript). 
 
+### Repozytoria
+Serwer REST API: [github.com/kabi097/zdalnie_api](https://github.com/kabi097/zdalnie_api)
+
+Aplikacja frontend: [github.com/kabi097/zdalnie_app](https://github.com/kabi097/zdalnie_app)
+
 ### Demo (video)
 <a href="https://vimeo.com/450289918" target="_blank"><img alt="Zobacz film" src="https://i.imgur.com/umqA1VB.png" width="700"></a>
 ![](https://i.imgur.com/ncDHI2Z.png)
@@ -38,7 +43,7 @@ CREATE DATABASE zdalnie_db;
 CREATE USER 'zdalnie_user'@'localhost' IDENTIFIED BY 'qwerty123';
 GRANT ALL PRIVILEGES ON on zdalnie_db.* TO zdalnie_user@'%' IDENTIFIED by 'qwerty123';
 ```
-5. Skopiuj zawartość *.env.example* do pliku *.env* i uzupełnij dane w
+5. Skopiuj zawartość *.env.example* do pliku *.env* i uzupełnij dane w poniższej linijce
 ```
 DATABASE_URL=mysql://zdalnie_user:qwerty123@127.0.0.1:3306/zdalnie_db
 ```
@@ -60,4 +65,5 @@ php bin/console hautelook:fixtures:load
 ``` 
 symfony serve
 ```
-10. Wejdź pod adres [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api) i korzystaj z aplikacji.
+10. Wejdź pod adres [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api) i korzystaj interfejsu API
+11. Zainstaluj i skonfiguruj aplikację frontend, korzystając instrukcji dostępnej [na tej stronie](https://github.com/kabi097/zdalnie_api)
