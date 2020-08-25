@@ -21,14 +21,14 @@ Aplikacja frontend: [github.com/kabi097/zdalnie_app](https://github.com/kabi097/
 
 ### Instrukcja
 
-1. Ściągnij repozytorium
+1. Zainstaluj narzędzie [Symfony CLI](https://symfony.com/download)
+```
+wget https://get.symfony.com/cli/installer -O - | bash
+```
+2. Ściągnij repozytorium
 ``` 
 git clone git@github.com:kabi097/zdalnie_api.git 
 cd zdalnie_api
-```
-2. Zainstaluj narzędzie [Symfony CLI](https://symfony.com/download)
-```
-wget https://get.symfony.com/cli/installer -O - | bash
 ```
 3. Zainstaluj zależności
 ```
